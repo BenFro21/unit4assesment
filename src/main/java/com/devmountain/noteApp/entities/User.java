@@ -1,7 +1,12 @@
 package com.devmountain.noteApp.entities;
 
 
+import com.devmountain.noteApp.dtos.UserDto;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+
+import java.util.HashSet;
+import java.util.Set;
 
 // anotate with entity and what table you want to enter the data into
 @Entity
@@ -19,6 +24,18 @@ public class User {
 
     @Column
     private String password;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @JsonManagedReference
+    private Set<Note> noteSet = new HashSet<>();
+
+    public User(UserDto userDto){
+        if(userDto.getUsername() != null) {
+            this.username = userDto.getUsername();
+        }if(userDto.getPassword() != null){
+            this.password = userDto.getPassword();
+        }
+    }
 
     //Constructors create Objects inside of Java, and you can overload constructors to be able to handle multiple different scenarios when creating an object,
     // the most common scenarios include a No Argument constructor, and an All Argument constructor.

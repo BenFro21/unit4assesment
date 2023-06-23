@@ -1,10 +1,18 @@
 package com.devmountain.noteApp.entities;
 
 
+import com.devmountain.noteApp.dtos.NoteDto;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "Notes")
+@Data // add this and the next two lines to DI getters, setters, constructors
+@AllArgsConstructor
+@NoArgsConstructor
 public class Note {
 
     @Id
@@ -14,29 +22,16 @@ public class Note {
     @Column(columnDefinition = "text")
     private String body;
 
-    //Constructors
-    public Note() {
+//    @ManyToOne creates the association within Hibernate
+//    @JsonBackReference prevents infinite recursion when you deliver the resource up as JSON through the RESTful API endpoint you will create
+    @ManyToOne
+    @JsonBackReference
+    private User user;
+
+    public Note(NoteDto noteDto){
+        if(noteDto.getBody() != null){
+            this.body = noteDto.getBody();
+        }
     }
 
-    public Note(Long id, String body) {
-        this.id = id;
-        this.body = body;
-    }
-
-    // getters and setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getBody() {
-        return body;
-    }
-
-    public void setBody(String body) {
-        this.body = body;
-    }
 }
